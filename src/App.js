@@ -9,7 +9,7 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      <ParticlesBg type="cobweb" bg={true} />
+      <ParticlesBg type="cobweb" bg={true} num={150} className='particles' />
       <Navigation />
       <Logo />
       <Rank />

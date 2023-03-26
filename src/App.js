@@ -18,7 +18,6 @@ class App extends Component {
       box: {},
       route: 'home',
       isSignedIn: false,
-      content: {},
     };
   }
 

@@ -9,17 +9,47 @@ import FaceRecognition from './components/FaceRecognition/FaceRecognition.js';
 import ParticlesBg from 'particles-bg';
 import './App.css';
 
+const initialState = {
+  input: '',
+  imageUrl: '',
+  box: {},
+  route: 'signin',
+  isSignedIn: false,
+  user: {
+    email: '',
+    id: '',
+    name: '',
+    entries: 0,
+    joined: ''
+  }
+}
+
 class App extends Component {
   constructor() {
     super();
-    this.state = {
-      input: '',
-      imageUrl: '',
-      box: {},
-      route: 'home',
-      isSignedIn: false,
-    };
+    this.state = initialState
   }
+
+  loadUser = (data) => {
+    this.setState({user: {
+      email: data.email,
+      id: data.id,
+      name: data.name,
+      entries: data.entries,
+      joined: data.joined
+    }})
+  }
+
+  // componentDidMount() {
+  //   if (this.state.isSignedIn) {
+  //     this.setState({route : 'home'});
+  //   } else {
+  //     this.setState({route : 'signin'});
+  //   }
+  //   fetch('http://localhost:3000')
+  //     .then(response => response.json())
+  //     .then(console.log)
+  // }
 
   calculateFaceLocation = (data) => {
     const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
@@ -45,41 +75,38 @@ class App extends Component {
 
   onButtonSubmit = () => {
     this.setState({imageUrl: this.state.input})
-    const raw = JSON.stringify({
-      "user_app_id": {
-      "user_id": "clarifai",
-      "app_id": "main"
-    },
-    "inputs": [
-        {
-            "data": {
-                "image": {
-                    "url": this.state.input
-                }
-            }
-        }
-    ]
-  });
-
-  const requestOptions = {
-    method: 'POST',
-    headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Key ' + 'ccebc73580ab45c994bc710eee9dc5c1'
-    },
-    body: raw
-  };
-
-  fetch(`https://api.clarifai.com/v2/models/face-detection/versions/6dc7e46bc9124c5c8824be4822abe105/outputs`, requestOptions)
+    fetch('http://localhost:3000/imageurl', {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        input: this.state.input
+      })
+    })
     .then(response => response.json())
-    .then(response => this.displayFaceBox(this.calculateFaceLocation(response)))
-    .then(response => console.log(response))
+    .then(response => {
+      if (response) {
+        fetch('http://localhost:3000/image', {
+          method: 'put',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            id: this.state.user.id
+          })
+        })
+        .then(response => response.json())
+        .then(count => {
+          this.setState(Object.assign(this.state.user, { entries: count }))
+        })
+        .catch(console.lo)
+      }
+      this.displayFaceBox(this.calculateFaceLocation(response))
+    })
     .catch(error => console.log('error', error));
   }
 
   onRouteChange = (route) => {
     if (route === 'signout') {
-      this.setState({isSignedIn: false})
+      this.setState(initialState)
+      // window.location.reload();
     } else if (route === 'home') {
       this.setState({isSignedIn: true})
     }
@@ -95,16 +122,16 @@ class App extends Component {
         { route === 'home'
           ?<div>
             <Logo />
-            <Rank />
+            <Rank name={this.state.user.name} entries={this.state.user.entries} />
             <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
             <FaceRecognition box={box} imageUrl={imageUrl} />
           </div>
-          : (route === 'signin'
+          : (route === 'register'
             ?<div>
-              <Signin onRouteChange={this.onRouteChange}/>
+              <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
             </div>
             :<div>
-              <Register onRouteChange={this.onRouteChange} />
+              <Signin loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
             </div>)
       }
       </div>

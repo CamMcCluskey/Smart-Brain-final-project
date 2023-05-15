@@ -40,16 +40,9 @@ class App extends Component {
     }})
   }
 
-  // componentDidMount() {
-  //   if (this.state.isSignedIn) {
-  //     this.setState({route : 'home'});
-  //   } else {
-  //     this.setState({route : 'signin'});
-  //   }
-  //   fetch('http://localhost:3000')
-  //     .then(response => response.json())
-  //     .then(console.log)
-  // }
+  componentDidMount() {
+      document.title = "Smart brain";
+  }
 
   calculateFaceLocation = (data) => {
     const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;

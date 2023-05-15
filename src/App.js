@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Favicon from 'react-favicon';
 import Navigation from './components/Navigation/Navigation.js';
 import Signin from './components/Signin/Signin.js';
 import Register from './components/Register/Register.js';
@@ -110,6 +111,7 @@ class App extends Component {
     const { isSignedIn, imageUrl, route, box } = this.state;
     return (
       <div className="App">
+        <Favicon url="cammccluskey.com/favicon.ico" />
         <ParticlesBg type="cobweb" bg={true} num={150} className='particles' />
         <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
         { route === 'home'

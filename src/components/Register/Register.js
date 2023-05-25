@@ -1,5 +1,7 @@
  import React from 'react';
 
+ const SERVER_URL = process.env.REACT_APP_SERVER_URL;
+
 class Register extends React.Component {
 
 	constructor(props) {
@@ -24,7 +26,7 @@ class Register extends React.Component {
 	}
 
 	onSubmitSignIn = () => {
-		fetch('https://stingray-app-jvmwj.ondigitalocean.app/register', {
+		fetch(`${ SERVER_URL }register`, {
 			method: 'post',
 			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify({

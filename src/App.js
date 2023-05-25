@@ -9,6 +9,7 @@ import FaceRecognition from './components/FaceRecognition/FaceRecognition.js';
 import ParticlesBg from 'particles-bg';
 import './App.css';
 
+const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 const initialState = {
   input: '',
   imageUrl: '',
@@ -68,7 +69,7 @@ class App extends Component {
 
   onButtonSubmit = () => {
     this.setState({imageUrl: this.state.input})
-    fetch('https://stingray-app-jvmwj.ondigitalocean.app/imageurl', {
+    fetch(`${ SERVER_URL }imageurl`, {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -78,7 +79,7 @@ class App extends Component {
     .then(response => response.json())
     .then(response => {
       if (response) {
-        fetch('https://stingray-app-jvmwj.ondigitalocean.app/image', {
+        fetch(`${ SERVER_URL }image`, {
           method: 'put',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
@@ -110,7 +111,7 @@ class App extends Component {
     const { isSignedIn, imageUrl, route, box } = this.state;
     return (
       <div className="App">
-        <ParticlesBg type="cobweb" bg={true} num={150} className='particles' />
+        <ParticlesBg type="cobweb" bg={true} num={window.innerWidth / 10} className='particles' />
         <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
         { route === 'home'
           ?<div>
